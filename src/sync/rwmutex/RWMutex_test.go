@@ -1,6 +1,3 @@
-// Copyright: ThoughtSpot Inc 2018
-// Author: Abhay Bothra (abhay@thoughtspot.com)
-//
 // Testing notes: We rely heavily on the go race detetor to test our
 // implementation.
 

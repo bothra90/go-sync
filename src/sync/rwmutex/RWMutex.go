@@ -1,11 +1,8 @@
-// Copyright: ThoughtSpot Inc 2018
-// Author: Abhay Bothra (abhay@thoughtspot.com)
-
 package mutex
 
 import (
-	"ts/sync/mutex"
-	"ts/sync/semaphore"
+	"sync/mutex"
+	"sync/semaphore"
 )
 
 type RWMutex interface {

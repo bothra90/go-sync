@@ -1,9 +1,6 @@
-// Copyright: ThoughtSpot Inc 2018
-// Author: Abhay Bothra (abhay@thoughtspot.com)
-
 package mutex
 
-import "ts/sync/semaphore"
+import "sync/semaphore"
 
 type Mutex interface {
 	Lock()
