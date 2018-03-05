@@ -11,11 +11,11 @@ type Semaphore interface {
 }
 
 // Implementation note:
-// In the initial implementation, I tried using a buffered channel as
+// In the initial implementation, we tried using a buffered channel as
 // recommended by http://www.golangpatterns.info/concurrency/semaphores.
-// However, I quickly realized that it provides the wrong abstraction, since
+// However, we quickly realized that it provides the wrong abstraction, since
 // semaphores don't have their initial value as their limit, which would be the
-// case if we use a buffered channel. I therefore chose to go with an int value
+// case if we use a buffered channel. We therefore chose to go with an int value
 // combined with a sync.Cond which is used by Signal() to notify any go routines
 // blocked on Wait().
 type semaphore struct {
