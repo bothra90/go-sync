@@ -1,7 +1,7 @@
 // Testing notes: We rely heavily on the go race detetor to test our
 // implementation.
 
-package mutex
+package rwmutex
 
 import (
 	"fmt"
