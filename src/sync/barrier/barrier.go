@@ -20,7 +20,7 @@ package barrier
 
 import (
 	"fmt"
-	"sync"
+	"sync/mutex"
 	"sync/semaphore"
 )
 
@@ -34,7 +34,7 @@ type barrier struct {
 	N              int
 	entryTurnstile semaphore.Semaphore
 	exitTurnstile  semaphore.Semaphore
-	mu             sync.Mutex
+	mu             mutex.Mutex
 	count          int
 }
 
@@ -50,6 +50,7 @@ func New(N int) (Barrier, error) {
 		N:              N,
 		entryTurnstile: entryTurnstile,
 		exitTurnstile:  exitTurnstile,
+		mu:             mutex.New(),
 		count:          0,
 	}, nil
 }
