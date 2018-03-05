@@ -38,7 +38,7 @@ type barrier struct {
 	count          int
 }
 
-func New(N int) (*barrier, error) {
+func New(N int) (Barrier, error) {
 	if N <= 0 {
 		return nil, fmt.Errorf("Cannot create a barrier for %d go-routines", N)
 	}

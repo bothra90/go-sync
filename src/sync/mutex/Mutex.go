@@ -11,7 +11,7 @@ type mutex struct {
 	lock semaphore.Semaphore
 }
 
-func New() *mutex {
+func New() Mutex {
 	// Ignore error.
 	sem, _ := semaphore.New(1)
 	return &mutex{

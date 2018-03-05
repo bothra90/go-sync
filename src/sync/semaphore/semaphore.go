@@ -23,7 +23,7 @@ type semaphore struct {
 	cond  *sync.Cond
 }
 
-func New(n int) (*semaphore, error) {
+func New(n int) (Semaphore, error) {
 	if n < 0 {
 		return nil, fmt.Errorf("Cannot create a semaphore of initial value: %d", n)
 	}

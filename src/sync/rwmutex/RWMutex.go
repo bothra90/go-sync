@@ -18,7 +18,7 @@ type rwmutex struct {
 	readers    int
 }
 
-func New() *rwmutex {
+func New() RWMutex {
 	lock := mutex.New()
 	room_empty, _ := semaphore.New(1)
 	return &rwmutex{
