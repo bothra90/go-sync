@@ -58,6 +58,8 @@ func (rw *rwmutex) RUnlock() {
 
 // A writerPriorityRWMutex gives priority to writers over readers by allowing
 // any waiting writer to proceed before any waiting reader.
+// Implementation note: readSwitch should internally lock/unlock noWriters, and
+// writeSwitch should lock/unlock noReaders for this rwmutex to work.
 type writerPriorityRWMutex struct {
 	noReaders   mutex.Mutex
 	readSwitch  lightswitch.LightSwitch // Controls noWriters.
@@ -66,22 +68,33 @@ type writerPriorityRWMutex struct {
 }
 
 func (rw *writerPriorityRWMutex) Lock() {
+	// Use a writeSwitch to prevent other readers from acquiring lock on noReaders
+	// while allowing writers to proceed and then get blocked on noWriters.
 	rw.writeSwitch.Lock()
+	// Prevent other writers from proceeding beyond this point while a writer is
+	// present in the critical section.
 	rw.noWriters.Lock()
 }
 
 func (rw *writerPriorityRWMutex) Unlock() {
+	// Allow any queued writers to go into critical section.
 	rw.noWriters.Unlock()
+	// Allow any queued readers to proceed if this is the last writer.
 	rw.writeSwitch.Unlock()
 }
 
 func (rw *writerPriorityRWMutex) RLock() {
+	// Block for all queued writers to exit. Once this returns, prevent writers
+	// from entering while *this* reader has the lock.
 	rw.noReaders.Lock()
+	// Immediately allow writers to be queued behind this reader.
 	defer rw.noReaders.Unlock()
+	// Prevent any writers from acquiring writeSwitch.Lock()
 	rw.readSwitch.Lock()
 }
 
 func (rw *writerPriorityRWMutex) RUnlock() {
+	// Allow writers to enter the critical section if this is the last reader.
 	rw.readSwitch.Unlock()
 }
 
