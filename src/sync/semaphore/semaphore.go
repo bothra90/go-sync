@@ -1,5 +1,3 @@
-// Author: Abhay Bothra (abhay@thoughtspot.com)
-
 package semaphore
 
 import (

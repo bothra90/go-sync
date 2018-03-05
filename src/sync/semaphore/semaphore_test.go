@@ -1,5 +1,3 @@
-// Copyright: ThoughtSpot Inc 2018
-
 package semaphore
 
 import (
