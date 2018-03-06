@@ -20,7 +20,6 @@ package barrier
 
 import (
 	"fmt"
-	"sync/mutex"
 	"sync/semaphore"
 )
 
@@ -34,7 +33,7 @@ type barrier struct {
 	N              int
 	entryTurnstile semaphore.Semaphore
 	exitTurnstile  semaphore.Semaphore
-	mu             mutex.Mutex
+	mu             semaphore.Semaphore
 	count          int
 }
 
@@ -46,35 +45,37 @@ func New(N int) (Barrier, error) {
 	entryTurnstile, _ := semaphore.New(0)
 	// entryTurnstile is used to control exit from the barrier.
 	exitTurnstile, _ := semaphore.New(0)
+	// Mutex is used to get/set count.
+	mu, _ := semaphore.New(1)
 	return &barrier{
 		N:              N,
 		entryTurnstile: entryTurnstile,
 		exitTurnstile:  exitTurnstile,
-		mu:             mutex.New(),
+		mu:             mu,
 		count:          0,
 	}, nil
 }
 
 func (b *barrier) Enter() {
-	b.mu.Lock()
+	b.mu.Wait(1)
 	b.count += 1
 	if b.count == b.N {
 		// Load the entryTurnstile to allow all waiting threads to pass.
 		b.entryTurnstile.Signal(b.N)
 	}
-	b.mu.Unlock()
+	b.mu.Signal(1)
 	b.entryTurnstile.Wait(1)
 	return
 }
 
 func (b *barrier) Exit() {
-	b.mu.Lock()
+	b.mu.Wait(1)
 	b.count -= 1
 	if b.count == 0 {
 		// Load the entryTurnstile to allow all waiting threads to pass.
 		b.exitTurnstile.Signal(b.N)
 	}
-	b.mu.Unlock()
+	b.mu.Signal(1)
 	b.exitTurnstile.Wait(1)
 	return
 }
